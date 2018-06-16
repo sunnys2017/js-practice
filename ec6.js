@@ -49,27 +49,31 @@ Shouter.prototype.speak = function(text) {
 
 new Shouter("Dr. Loudmouth").speak("hello there")
 */
+
+/*
 class Speaker{
   constructor(name,verb){
     this.name=name;
-    this.verb=verb;// || "says";
+    this.verb=verb || "says";
   }
-  speak(){
-  	console.log(this.name + " " + "says" + " '" + this.verb + "'");
+  speak(text){
+  	console.log(this.name + " " + this.verb + " '" + text + "'");
   }
 }
 
 class Shorter extends Speaker{
-  constructor(name,verb){
-    super(name,verb);
+  constructor(name){
+    super(name,"shouts");
   }
-  speak(){
-    console.log(this.name + " " + "says" + (" '" + this.verb + "'").toUpperCase());
+  speak(text){
+    //console.log(this.name + " " + this.verb + (" '" + this.text + "'").toUpperCase());
+    super.speak(text.toUpperCase());
   }
 }
 
-let s = new Shorter("Dr. Loudmouth","hello there");
-s.speak();
+let s = new Shorter("Dr. Loudmouth");
+s.speak("lalal");
+*/
 
 /*
 Getters
@@ -79,3 +83,37 @@ of awkward. Refactor the code to use a getter (get verb() { ... }) instead
 of an instance property.
 */
 
+class Speaker {
+  constructor(name,verb) {
+    this.name = name
+    this.verb = verb || this.getVerb()
+  }
+  getVerb() {
+    return "says";
+  }
+  speak(text) {
+    console.log(this.name + " " + this.verb + " '" + text + "'")
+  }
+}
+
+class Shouter extends Speaker {
+  constructor(name) {
+    super(name)
+  }
+  getVerb(){
+    return "shorts"
+  }
+  speak(text) {
+    super.speak(text.toUpperCase())
+  }
+}
+new Speaker("Dr. Loudmouth").speak("hello there")
+new Shouter("Dr. Loudmouth").speak("hello there")
+//Dr. Loudmouth says 'hello there'
+//Dr. Loudmouth shorts 'HELLO THERE'
+
+/*
+Fake point
+Use a single object literal to create an object that is indistinguishable 
+from a Point instance, without calling the Point constructor.
+*/
