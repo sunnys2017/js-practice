@@ -199,7 +199,7 @@ const account = {
   username: "marijn",
   password: "xyzzy"
 }
-Object.freeze(account) //my code here
+Object.freeze(account) //your code here
 account.password = "s3cret" // (*much* more secure)
 
 console.log(account.password)
@@ -212,7 +212,6 @@ What could be the reason for this?
 let s = new Something()
 class Something {}
 */
-
 /*
 The difference between var/function/function* declarations and let/const/class 
 declara­tions is the initialisation.
@@ -224,11 +223,87 @@ variables however stay uninitialised. This means that a ReferenceError exception
   the temporal dead zone.
 */
 
-/*
-Arrow functions.1:
+/*Arrow functions.1:
 Accounting
 Write an expression using higher-order array methods (say, filter and reduce) to 
 compute the total value of the machines in the inventory array.
+*/
+const inventory = [
+  {type:   "machine", value: 5000},
+  {type:   "machine", value:  650},
+  {type:      "duck", value:   10},
+  {type: "furniture", value: 1200},
+  {type:   "machine", value:   77}
+]
+
+// your code here
+let totalMachineValue = inventory.filter(x => x.type === "machine")
+  .map((n) => n.value)
+    .reduce((sum, n) => (sum += n), 0)
+//->5727
+console.log(totalMachineValue)
+
+/*Arrow functions.2:
+Sorted array
+The code for this exercise implements a wrapper for working with sorted arrays. 
+Its constructor takes a comparison function that compares two elements and returns
+ a number, negative if the first is less than the second, zero when they are equal,
+  and positive otherwise (similar to what the sort method on arrays expects).
+Rewrite the code to use an ES6 class. Then, rewrite the loop to use the ES6 array 
+method findIndex, which is like indexOf, but takes a function instead of an element
+ as argument, and returns the index of the first element for which that function 
+ returns true (or returns -1 if no such element was found). For example 
+ [1, 2, 3].findIndex(x => x > 1) yields 1. Use arrow functions for all function 
+ expressions.
+*/
+function SortedArray(compare) {
+  this.compare = compare
+  this.content = []
+}
+SortedArray.prototype.findPos = function(elt) {
+  for (var i = 0; i < this.content.length; i++) {
+    if (this.compare(elt, this.content[i]) < 0) break
+  }
+  return i
+}
+SortedArray.prototype.insert = function(elt) {
+  this.content.splice(this.findPos(elt), 0, elt)
+}
+var sorted = new SortedArray(function(a, b) { return a - b })
+sorted.insert(5)
+sorted.insert(1)
+sorted.insert(2)
+sorted.insert(4)
+sorted.insert(3)
+console.log("array:", sorted.content)
+
+/*Arrow functions.3:
+Precedence
+Where does an arrow function end? At a closing bracket or semicolon, of course. 
+But does a comma denote the end? Is the body of the function in this example x + y,
+ 0, or just x + y?
+Is there anything else that will end an arrow function body? Experiment.
+console.log([1, 2, 3].reduce((x, y) => x + y, 0))
+console.log([1, 2, 3].reduce((x, y) => x + y))
+*/
+
+/*Destructuring.1:
+Avoiding disaster
+This function uses destructuring for argument parsing. But it has a problem: it 
+crashes when the caller passes an option object without an enable property. 
+Since all options have defaults, we'd like to not crash in this case. Can you 
+think of a clean way to fix this problem?
+  If you also want to allow not passing in an option object at all, how would you
+solve that?
+function go(options) {
+  let {speed = 4,
+       enable: {hyperdrive = false,
+                frobnifier = true}} = options
+  console.log("speed=", speed,
+              "hyperdrive:", hyperdrive,
+              "frobnifier:", frobnifier)
+}
+go({speed: 5})
 */
 
 

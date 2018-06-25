@@ -1,0 +1,423 @@
+console.log(`***arrow function examples***
+=== expression body ===
+`)
+
+let evens = new Array(1,2,3)
+
+let odds = evens.map(v => v + 1)
+
+let pairs = evens.map(v => ({
+	even: v,
+	odd: v + 1
+}))
+
+let nums = evens.map((v, i) => v +i)
+
+console.log(`Array odds:`, JSON.stringify(odds))
+
+console.log(`Array pairs:`, JSON.stringify(pairs))
+
+console.log(`Array nums:`, JSON.stringify(nums))
+
+console.log(`
+=== statement body ===
+			`)
+/*
+Array odds: [2,3,4]
+Array pairs: [{"even":1,"odd":2},{"even":2,"odd":3},{"even":3,"odd":4}]
+Array nums: [1,3,5]
+*/
+
+nums = new Array(2,5,3,4,15,7,8,6,5)
+
+let fives = new Array();
+nums.forEach(v => {
+	if (v % 5 === 0)
+		fives.push(v)
+})
+
+console.log(`Array fives:`, JSON.stringify(fives))
+
+console.log(`
+=== lexical this ===
+`)
+
+let example = {
+	nums: [2,5,3,4,15,7,8,6,5],
+	fives: [],
+	getFives: function() {
+		this.nums.forEach((v) => {
+			if (v % 5 === 0)
+				this.fives.push(v)
+		})
+	}
+}
+
+example.getFives();
+
+console.log(`Array example.nums:`, JSON.stringify(example.fives))
+
+console.log(`
+*** class examples ***
+=== class definition ===
+`)
+class Shape {
+	constructor(id, x, y){
+		this.id = id;
+		this.move(x, y);
+	}
+	move(x, y) {
+		this.x = x;
+		this.y = y;
+	}
+	getPos() {
+		return {
+			x: this.x,
+			y: this.y
+		}
+	}
+}
+let shape = new Shape(1, 10, 20)
+
+console.log(`Shape pos:`, JSON.stringify(shape.getPos()))
+
+shape.move(15, 35)
+
+console.log(`Shape pos:(after move)`, JSON.stringify(shape.getPos()))
+
+/*
+Shape pos: {}
+Shape pos:(after move) {"x":15,"y":35}
+*/
+
+class Rectangle extends Shape {
+	constructor(id, x, y, width, height) {
+		super(id, x, y);
+		this.width = width;
+		this.height = height;
+	}
+	getSize() {
+		return {
+			width: this.width,
+			height: this.height
+		}
+	}
+}
+
+class Circle extends Shape {
+	constructor(id, x, y, radius) {
+		super(id, x, y)
+		this.radius = radius
+	}
+}
+
+let rectangle = new Rectangle(2, 11, 21, 100, 200)
+console.log(`Recgangle size:`, JSON.stringify(rectangle.getSize()))
+
+let circle = new Circle(2, 80, 90, 50)
+console.log(`Circle pos:`, JSON.stringify(circle.getPos()))
+/*
+Shape pos: {"x":10,"y":20}
+Shape pos:(after move) {"x":15,"y":35}
+Recgangle size: {"width":100,"height":200}
+Circle pos: {"x":80,"y":90}
+*/
+
+console.log(`
+=== base class access ===
+`)
+
+{
+	class Shape {
+		constructor(id, x, y) {
+			this.id = id
+			this.x = x
+			this.y = y
+		}
+		toString() {
+			return `Shape(${this.id})`
+		}
+	}
+	class Rectangle extends Shape {
+		constructor(id, x, y, width, height) {
+			super(id, x, y)
+		}
+		toString() {
+			return `Rectangle > ${super.toString()}`
+		}
+	}
+	class Circle extends Shape {
+		constructor(id, x, y, radius) {
+			super(id, x, y)
+		}
+		toString() {
+			return `Circle > ${super.toString()}` 
+		}
+	}
+	let shape = new Shape(1,10,20)
+	console.log(shape.toString())
+	let rectangle = new Rectangle(2, 20, 30)
+	console.log(rectangle.toString())
+	let circle = new Circle(3, 30, 40)
+	console.log(circle.toString())
+}
+/*
+Shape(1)
+Rectangle > Shape(2)
+Circle > Shape(3)
+*/
+
+console.log(`=== static members ===`)
+{
+	class Rectangle extends Shape {
+		constructor(id, x, y, width, height) {
+			super(id, x, y)
+			this.width = width
+			this.height = height
+		}
+		static defaultRectangle() {
+			return new Rectangle('default', 2, 2, 100, 100)
+		}
+	}
+	class Circle extends Shape {
+		constructor(id, x, y, radius) {
+			super(id, x, y)
+			this.radius = radius
+		}
+		static defaultCircle() {
+			return new Circle('default', 4, 4, 100)
+		}
+	}
+	let rectangle = Rectangle.defaultRectangle()
+	console.log(`Rectangle data: `, JSON.stringify(rectangle))
+	let circle = Circle.defaultCircle()
+	console.log(`Circle data: `, JSON.stringify(circle))
+}
+
+console.log(`=== getter setter ===`)
+{
+	class Rectangle {
+		constructor(width, height) {
+			this._width = width
+			this._height = height
+		}
+		set width(width) {
+			this._width = width
+		}
+		get width() {
+			return this._width
+		}
+		set height(height) {
+			this._height = height
+		}
+		get height() {
+			return this._height
+		}
+		get area() {
+			return this._width * this._height
+		}
+	}
+	var r = new Rectangle(50, 20)
+	console.log(`Compare rectangle.area === 1000:`, r.area === 1000)
+}
+/*
+=== getter setter ===
+Compare rectangle.area === 1000: true
+*/
+
+console.log(`
+=== class inheritance ===
+`)
+{
+	var aggregation = (baseClass, ...mixins) => {
+		let base = class _Combined extends baseClass {
+			constructor(...args) {
+				super(...args)
+				mixins.forEach((mixin) => {
+					mixin.prototype.initializer.call(this)
+				})
+			}
+		}
+		let copyProps = (target, source) => {
+			Object.getOwnPropertyNames(source)
+				.concat(Object.getOwnPropertySymbols(source))
+				.forEach((prop) => {
+					if(prop.match())
+						return
+					Object.defineProperty(target, prop, Object.getOwnPropertyDescriptor(source, prop))
+				})
+		}
+		mixins.forEach((mixin) => {
+			copyProps(base.prototype, mixin.prototype)
+			copyProps(base, mixin)
+		})
+		return base
+	}
+	class Colored {
+		initializer() {
+			this._color = 'white'
+		}
+		get color() {
+			return this._color
+		}
+		set color(v) {
+			this._color = v
+		}
+	}
+	class ZCoord {
+		initializer(){
+			this._z = 0
+		}
+		get z() {
+			return this._z
+		}
+		set z(v) {
+			this._z = v
+		}
+	}
+	class Shape {
+		constructor(x, y) {
+			this._x = x
+			this._y = y
+		}
+		get x() {
+			return this._x
+		}
+		set x(v) {
+			this._x = v
+		}
+		get y() {
+			return this._y
+		}
+		set y(v) {
+			return this._y = v
+		}
+	}
+	class Rectangle extends aggregation(Shape, Colored, ZCoord) {}
+
+	var rect = new Rectangle(7, 42)
+	rect.z = 1000
+	rect.color = 'red'
+	console.log(`Rectangle data:
+	pos x: ${rect.x}
+	pos y: ${rect.y}
+	pos z: ${rect.z}
+	color: ${rect.color}
+	`)
+}
+
+console.log(`
+*** destructure assignment examples ***
+`)
+
+{
+	console.log(`
+	=== array matching ===
+	`)
+    var list = [1, 2, 3];
+    var [a, , b] = list;
+    console.log(`Value a:`, a);
+    console.log(`Value b:`, b);
+
+    [b, a] = [a, b];
+    console.log(`Value a:`, a);
+    console.log(`Value b:`, b);
+
+
+	function getASTNode() {
+		return {
+			op: 1,
+			lhs: 2,
+			rhs: 3
+		}
+	}
+	var {
+		op,
+		lhs,
+		rhs
+	} = getASTNode()
+
+	console.log(`Value op: `, op)
+	console.log(`Value lhs:`, lhs);
+    console.log(`Value rhs:`, rhs);
+
+    console.log(`=== object matching, deep matching ===`)
+
+    function getASTNode2() {
+    	return {
+    		op:1,
+    		lhs: {
+    			op:2
+    		},
+    		rhs:3
+    	}
+    }
+    var {
+    	op: a,
+    	lhs: {
+    		op: b
+    	},
+    	rhs:c
+    } = getASTNode2()
+    console.log(`Value a :`, a)
+    console.log(`Value b :`, b)
+    console.log(`Value c :`, c)
+	/*
+	Value a : 1
+	Value b : 2
+	Value c : 3
+	*/
+
+    console.log(`=== object and array matching, default value ===`)
+    var obj = {
+    	a: 1
+    }
+    var {
+    	a,
+    	b = 2
+    } = obj
+    console.log(`Value a: `, a)
+    console.log(`Value b: `, b)
+	/*
+	Value a:  1
+	Value b:  2
+	*/
+    var list = [1]
+    var [x, y =2] = list
+    console.log(`Value x:`, x);
+    console.log(`Value y:`, y);
+	/*
+	Value a:  1
+	Value b:  2
+	*/
+
+	console.log(`
+	=== Parameter Context Matching ===
+              `);
+    function f([name, val]) {
+    	console.log(name, val)
+    }
+    function g({name:n, val:v}) {
+    	console.log(n, v)
+    }
+    function h({name, val}) {
+    	console.log(name, val)
+    }
+    f(["bar", 23])
+    g({name: "foo", val:4})
+    h({name: "bar", val:33})
+    /*
+    bar 23
+	foo 4
+	bar 33
+    */
+
+    console.log(`=== fail soft destructure ===`)
+    var list = [7, 42]
+    var [a=1, b=2, c=3, d] = list
+    console.log(`Compare a === 7:`, a === 7);
+    console.log(`Compare b === 42:`, b === 42);
+    console.log(`Compare c === 3:`, c === 3);
+    console.log(`Compare d === undefined:`, d === undefined);
+    //all true
+}
