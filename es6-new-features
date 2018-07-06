@@ -421,3 +421,76 @@ console.log(`
     console.log(`Compare d === undefined:`, d === undefined);
     //all true
 }
+
+console.log(`*** enhanced object properties ***`)
+{
+	let x = 1, y = 2
+	let obj = { x, y}
+
+	console.log(`=== computed property names ===`)
+	let que = () => `foo`
+	let obj2 = { foo: "bababa", ["bababa" + que()]:43 }
+	console.log(`value:`, JSON.stringify(obj2))
+
+	console.log(`=== method property ===`)
+	let obj3 = {
+		foo(a, b) {
+			a + b
+		},
+		bar(x, y) {
+			x * y
+		},
+		* que(x, y) {
+			x + y
+		}
+	}
+	console.log(`value obj: ` , obj3)
+	/*
+	Value obj3: { foo: [Function: foo],
+ 	bar: [Function: bar],
+ 	que: [Function: que] }
+  	*/
+}
+
+console.log(`
+*** extended parameter handling example ***
+`)
+{
+	console.log(`
+=== default parameter values ===
+	`)
+	function function1(x, y=1, z=2) {
+		return x + y + z
+	}
+	console.log(`compare function1(1) === 4:`, function1(1) === 4) 
+	//true
+
+	console.log(`=== rest parameter ===`)
+	let a = new Array(1,2,3,4,5)
+	function function2(x, y, ...a){
+		return(x + y) * a.length
+	}
+	console.log(`compare function2():`, function2(1,2,"hello", true, 7))
+
+	//9
+	function function3(x, y, z,...a){
+		return(x + y) * a.length
+	}
+	console.log(`compare function3():`, function2(1,2,"hello", true, 7))
+	//6? got it! because: x=1, y=2, z="hello", a= the rest = [true, 7], a.length=2
+
+	console.log(`=== spread operator ===`)
+	let params = ["hello", true, 7]
+	console.log(`compare function2`, function2(1,2,...params))
+	//9
+
+	let other = [1, 2, ...params];
+    console.log(`Array other:`, JSON.stringify(other));
+    //Array other: [1,2,"hello",true,7]
+
+    let str = "foo"
+    let chars = [...str]
+    console.log(`array chars:`, JSON.stringify(chars))
+    //array chars: ["f","o","o"]
+}
+
